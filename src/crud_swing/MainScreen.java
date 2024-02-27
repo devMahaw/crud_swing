@@ -136,6 +136,11 @@ public class MainScreen extends javax.swing.JFrame {
         });
 
         BtnChange.setText("Atualizar");
+        BtnChange.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnChangeActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("Opções");
         jMenu1.addActionListener(new java.awt.event.ActionListener() {
@@ -305,7 +310,7 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_TxtStateActionPerformed
 
     private void BtnCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCleanActionPerformed
-        // TODO add your handling code here:
+        cleanFields();
     }//GEN-LAST:event_BtnCleanActionPerformed
 
     private void TableClientsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableClientsMouseClicked
@@ -347,6 +352,38 @@ public class MainScreen extends javax.swing.JFrame {
             
         }
     }//GEN-LAST:event_BtnDeleteActionPerformed
+
+    private void BtnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnChangeActionPerformed
+        int selectedRow = TableClients.getSelectedRow();
+        
+        if (selectedRow >= 0) {
+            String cpf = (String) TableClients.getValueAt(selectedRow, 1);
+            String name = TxtName.getText();
+            String tel = TxtTel.getText();
+            String address = TxtAddress.getText();
+            String num = TxtNum.getText();
+            String city = TxtCity.getText();
+            String state = TxtState.getText();
+            
+            if (!isValidFields(name, cpf, tel, address, num, city, state)) {
+                JOptionPane.showMessageDialog(this, "Faltam preencher campos obrigatórios.", "ATENÇÃO!",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            Client newClient = new Client(name, cpf, tel, address, num, city, state);
+            this.clientDao.change(newClient);
+            
+            model.removeRow(selectedRow);
+            model.addRow(new Object[]{newClient.getName(), newClient.getCpf(), newClient.getTel(),
+                newClient.getAddress(), newClient.getNumber(), newClient.getCity(), newClient.getState()});
+            
+            JOptionPane.showMessageDialog(null, "Cliente atualizado com sucesso!", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+            cleanFields();
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum cliente selecionado.", "Atenção!",JOptionPane.INFORMATION_MESSAGE);
+        }        
+    }//GEN-LAST:event_BtnChangeActionPerformed
 
     /**
      * @param args the command line arguments
